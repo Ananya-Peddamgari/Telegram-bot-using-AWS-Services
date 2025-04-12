@@ -1,0 +1,98 @@
+import json
+import os
+import urllib.request
+from datetime import datetime
+import random
+# Token (Replace with your actual bot token securely in environment variables ideally)
+TOKEN = "7649636684:AAF06oapbsXgNzqxopttbFEP6vUuonntskE"
+BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
+def lambda_handler(event, context):
+    try:
+        print("Received event:", event)
+        if 'body' not in event:
+            return {'statusCode': 400, 'body': json.dumps('No body in event')}
+
+        update = json.loads(event['body'])
+        print("Parsed update:", update)
+
+        message = update.get('message', {})
+        chat_id = message.get('chat', {}).get('id')
+        user_name = message.get('from', {}).get('first_name', 'there')
+        text = message.get('text', '').strip().lower()
+
+        print(f"Chat ID: {chat_id}, Text: {text}")
+
+        if text:
+            response_text = generate_reply(text, user_name)
+            send_message(chat_id, response_text)
+
+        return {'statusCode': 200, 'body': json.dumps('Message processed')}
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {'statusCode': 500, 'body': json.dumps(f'Error: {str(e)}')}
+def generate_reply(text, user_name):
+    jokes = [
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "Why do Java developers wear glasses? Because they don't see sharp!",
+        "I told my computer I needed a break, and now it won't stop sending me KitKats. 🍫"
+    ]
+
+    compliments = [
+        "You're doing amazing 🤩",
+        "You’ve got a great vibe 🌟",
+        "You're smarter than a supercomputer 💡"
+    ]
+    # Replies based on input
+    if text.startswith('/start'):
+        return f"👋 Hey {user_name}! I'm your AWS-powered bot. Type 'help' to see what I can do!"
+    elif text in ['hi', 'hello', 'hey']:
+        return f"Hey {user_name}! How can I assist you today? 😊"
+    elif 'how are you' in text:
+        return "I'm running on AWS Lambda, so always scalable and stress-free 😎"
+    elif 'joke' in text:
+        return random.choice(jokes)
+    elif 'compliment' in text:
+        return random.choice(compliments)
+    elif 'time' in text or 'date' in text:
+        now = datetime.now().strftime('%A, %B %d %Y - %I:%M %p')
+        return f"🕒 Current date and time is: {now}"
+    elif 'your name' in text:
+        return "I'm an AWS Lambda bot, but you can call me Cloudy ☁️"
+    elif 'what is aws' in text:
+        return "AWS (Amazon Web Services) is the world’s most comprehensive cloud platform 🌐"
+    elif 'who made you' in text:
+        return "I was made by a clever human using AWS, Python, and love 💛"
+    elif 'help' in text:
+        return (
+            "Here's what I can do:\n"
+            "🔹 Say hi → Get greeted\n"
+            "🔹 Ask for a joke → I'll make you laugh\n"
+            "🔹 Ask the time/date\n"
+            "🔹 Ask 'how are you', 'what is AWS', or 'your name'\n"
+            "🔹 Say 'compliment me' for a feel-good line\n"
+            "Try it out!"
+        )
+    elif 'bye' in text:
+        return f"Goodbye {user_name}! Come back soon 😊"
+    else:
+        return f"I'm not sure how to respond to that, {user_name} 😅\nType 'help' to see what I can do."
+def send_message(chat_id, text):
+    url = f"{BASE_URL}/sendMessage"
+    data = {
+        'chat_id': chat_id,
+        'text': text
+    }
+
+    data = json.dumps(data).encode('utf-8')
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={'Content-Type': 'application/json'}
+    )
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode('utf-8'))
+    except Exception as e:
+        print(f"Error sending message: {str(e)}")
+        return Non
