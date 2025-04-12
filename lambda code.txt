@@ -4,7 +4,7 @@ import urllib.request
 from datetime import datetime
 import random
 # Token (Replace with your actual bot token securely in environment variables ideally)
-TOKEN = "7649636684:AAF06oapbsXgNzqxopttbFEP6vUuonntskE"
+TOKEN = "your bot token"
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 def lambda_handler(event, context):
     try:
