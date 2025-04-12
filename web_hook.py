@@ -1,8 +1,8 @@
 import requests
 
 # Replace with your values
-BOT_TOKEN = "7649636684:AAF06oapbsXgNzqxopttbFEP6vUuonntskE"
-LAMBDA_URL = "https://a4dbejarme.execute-api.us-east-1.amazonaws.com/default/SimpleTelegramBot"
+BOT_TOKEN = "your_api_token"
+LAMBDA_URL = "invoke url of api gateway"
 
 def set_webhook():
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook"
